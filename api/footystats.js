@@ -10,9 +10,7 @@ export default async function handler(req, res) {
     }
 
     const upstream = new URL(`https://api.footystats.org/${path}`);
-    urlIn.searchParams.forEach((v, k) => {
-      if (k !== "path") upstream.searchParams.set(k, v);
-    });
+    urlIn.searchParams.forEach((v, k) => { if (k !== "path") upstream.searchParams.set(k, v); });
     upstream.searchParams.set("key", process.env.FOOTYSTATS_KEY);
 
     const r = await fetch(upstream.toString(), { headers: { "Accept": "application/json" } });
