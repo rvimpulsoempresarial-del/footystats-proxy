@@ -40,6 +40,17 @@ export default async function handler(req, res) {
       return res.status(400).json({ success: false, message: 'player_id requerido para player-stats' });
     }
 
+    // 🔒 BLOQUE NUEVO: evita respuestas gigantes en league-list
+    // Si el modelo olvida los filtros, inyectamos chosen_leagues_only=true por defecto,
+    // salvo que ya venga chosen_leagues_only o country especificado.
+    if (path === 'league-list') {
+      const hasChosen = urlIn.searchParams.has('chosen_leagues_only');
+      const hasCountry = urlIn.searchParams.has('country');
+      if (!hasChosen && !hasCountry) {
+        urlIn.searchParams.set('chosen_leagues_only', 'true');
+      }
+    }
+
     // ✅ Construir URL al origen (FootyStats oficial)
     const upstream = new URL(`https://api.footystats.org/${path}`);
 
